@@ -13,13 +13,14 @@ import '../../../../../core/utils/media_helper.dart';
 
 import '../../../../../core/utils/servies_locator.dart';
 import '../../../../login/manager/auth_cubit.dart';
+import '../../../../login/models/get_login_model.dart';
 import '../../../../login/peresentation/login_view.dart';
 import '../../get_images_cubit/get_images_cubit.dart';
 import 'image_picker_widget.dart';
 
 class HomeViewBody extends StatefulWidget {
-  const HomeViewBody({super.key});
-
+  const HomeViewBody({super.key, required this.name});
+  final String name;
   @override
   State<HomeViewBody> createState() => _HomeViewBodyState();
 }
@@ -29,6 +30,8 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   final MediaServiceInterface _mediaService = getIt<MediaServiceInterface>();
   File? imageFile;
   bool _isLoadingGettingImage = false;
+
+
 
   Future<AppImageSource?> pickImageSource() async {
     AppImageSource? appImageSource = await showCupertinoModalPopup(
@@ -63,7 +66,10 @@ class _HomeViewBodyState extends State<HomeViewBody> {
 
   @override
   Widget build(BuildContext context) {
+
+    GetLoginModel ?getLoginModel;
     AuthCubit auth=AuthCubit();
+
     return SafeArea(
       child: BlocBuilder<GetImagesCubit, GetImagesState>(
         builder: (context, state) {
@@ -115,10 +121,10 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                        Positioned(
                           left: 20.w,
                           top: 25.h,
-                          child: const Text(
-                            'Welcome\nMina',
+                          child:  Text(
+                            'Welcome\n${(widget.name.isEmpty)? CacheHelper.getToken():widget.name}',
                             style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 26.sp,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black),
                             textAlign: TextAlign.left,

@@ -28,7 +28,7 @@ class GalleryApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: theme(context),
             //isFirstTime ? const LoginView() : const HomeView(),
-            home: CacheHelper.getToken().isNotEmpty? const HomeView(): const LoginView(),
+            home: CacheHelper.getToken().isNotEmpty? HomeView(name: CacheHelper.getName(),): const LoginView(),
           );
         },
        );

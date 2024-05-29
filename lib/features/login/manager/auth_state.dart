@@ -7,6 +7,8 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
+ GetLoginModel?  getLoginModel;
+ AuthAuthenticated({required this.getLoginModel});
 
 }
 

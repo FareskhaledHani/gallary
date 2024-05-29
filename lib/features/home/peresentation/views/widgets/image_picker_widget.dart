@@ -13,6 +13,7 @@ import '../../../../../core/utils/styles.dart';
 
 import '../../send_image_cubit/send_images_cubit.dart';
 import 'package:image_picker/image_picker.dart';
+
 class ImagePickerActionSheet extends StatelessWidget {
   const ImagePickerActionSheet({super.key});
 
@@ -38,60 +39,70 @@ class ImagePickerActionSheet extends StatelessWidget {
                   border: Border.all(width: 0.5, color: Colors.white70)),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 50.0),
-                child: Column(
-                  children: [
-                    BlocConsumer<ImageUploadCubit, SendImagesState>(
-                      listener: (context, state) {
-                        if (state is SendImagesSuccess) {
-                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Image uploaded successfully')),
+                child: BlocConsumer<ImageUploadCubit, SendImagesState>(
+                  listener: (context, state) {
+                    if (state is SendImagesSuccess) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Image uploaded successfully')),
+                      );
+                    } else if (state is SendImagesFailure) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to upload image')),
+                      );
+                    }
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    return state is SendImagesLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : Column(
+                            children: [
+                              PickUpButton(
+                                text: '   Gallery',
+                                image: AssetsData.gallery,
+                                color: firstContainerColor,
+                                onTap: () async {
+                                  final XFile? imageFile = await ImagePicker()
+                                      .pickImage(source: ImageSource.gallery);
+                                  if (imageFile != null) {
+                                    context
+                                        .read<ImageUploadCubit>()
+                                        .uploadImage(File(imageFile.path));
+                                  }
+                                },
+                              ),
+                              // PickUpButton(
+                              //     text: '   Gallery',
+                              //     image: AssetsData.gallery,
+                              //     color: firstContainerColor,
+                              //     onTap: () async {
+                              //       // final File? imageFile = await pickImage();
+                              //       // if (imageFile != null) {
+                              //       //   await context.read<SendImagesCubit>()
+                              //       //       .sendImages(imageFile);
+                              //     }),
+                              SizedBox(
+                                height: 44.h,
+                              ),
+                              PickUpButton(
+                                text: 'Camera',
+                                image: AssetsData.camera,
+                                color: secContainerColor,
+                                onTap: () async {
+                                  final XFile? imageCamera = await ImagePicker()
+                                      .pickImage(source: ImageSource.camera);
+                                  if (imageCamera != null) {
+                                    context
+                                        .read<ImageUploadCubit>()
+                                        .uploadImage(File(imageCamera.path));
+                                  }
+                                  // Navigator.of(context).pop( AppImageSource.camera);
+                                },
+                              ),
+                            ],
                           );
-                        } else if(state is SendImagesFailure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Failed to upload image')),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        return state is SendImagesLoading
-                            ? const CircularProgressIndicator()
-                            : PickUpButton(
-                          text: '   Gallery',
-                          image: AssetsData.gallery,
-                          color: firstContainerColor,
-                          onTap: () async {
-                            final XFile? imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-                            if (imageFile != null) {
-                              context.read<ImageUploadCubit>().uploadImage(File(imageFile.path));
-                            }
-                          },
-
-                        );
-                        return PickUpButton(
-                            text: '   Gallery',
-                            image: AssetsData.gallery,
-                            color: firstContainerColor,
-                            onTap: () async {
-                              // final File? imageFile = await pickImage();
-                              // if (imageFile != null) {
-                              //   await context.read<SendImagesCubit>()
-                              //       .sendImages(imageFile);
-                            });
-                      },
-                    ),
-                    SizedBox(
-                      height: 44.h,
-                    ),
-                    PickUpButton(
-                      text: 'Camera',
-                      image: AssetsData.camera,
-                      color: secContainerColor,
-                      onTap: () {
-                        Navigator.of(context).pop(AppImageSource.camera);
-                      },
-                    ),
-                  ],
+                  },
                 ),
               ),
             ),
@@ -101,10 +112,10 @@ class ImagePickerActionSheet extends StatelessWidget {
     );
   }
 
-  // Future<File?> pickImage() {
-  //   // Implement your logic to pick an image from gallery
-  //   return Future.value(null); // Replace this with actual image picking logic
-  // }
+// Future<File?> pickImage() {
+//   // Implement your logic to pick an image from gallery
+//   return Future.value(null); // Replace this with actual image picking logic
+// }
 }
 
 class PickUpButton extends StatelessWidget {

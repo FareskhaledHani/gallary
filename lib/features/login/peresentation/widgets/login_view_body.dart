@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_galariy/features/login/peresentation/widgets/custom_button.dart';
 import '../../../../../core/utils/assets.dart';
+import '../../../../core/utils/cash_helper.dart';
 import '../../../../core/utils/styles.dart';
 import '../../../home/peresentation/views/home_view.dart';
 import '../../manager/auth_cubit.dart';
@@ -27,9 +28,11 @@ class _LoginViewBodyState extends State<LoginViewBody> {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if(state is AuthAuthenticated){
+          final String name=state.getLoginModel!.name;
+          CacheHelper.setName(name);
           Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomeView()));
+              MaterialPageRoute(builder: (context) =>  HomeView(name: (state.getLoginModel!.name),)));
         }else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
 
